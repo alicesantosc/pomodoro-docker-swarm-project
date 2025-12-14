@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: pomodoro_user
+      POSTGRES_PASSWORD: pomodoro_pass
+      POSTGRES_DB: pomodoro_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pomodoro_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  backend:
+    image: pomodoro-backend:latest
+    environment:
+      DATABASE_URL: postgresql://pomodoro_user:pomodoro_pass@postgres:5432/pomodoro_db
+    ports:
+      - "8000:8000"
+    networks:
+      - pomodoro_network
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    image: pomodoro-frontend:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - pomodoro_network
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  postgres_data:
+
+networks:
+  pomodoro_network:
+    driver: overlay

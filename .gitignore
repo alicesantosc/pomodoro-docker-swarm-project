@@ -1,0 +1,14 @@
+backend/venv/
+venv/
+env/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+
+node_modules/

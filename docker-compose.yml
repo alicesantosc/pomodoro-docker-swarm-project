@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: pomodoro_db
+    environment:
+      POSTGRES_USER: pomodoro_user
+      POSTGRES_PASSWORD: pomodoro_pass
+      POSTGRES_DB: pomodoro_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pomodoro_network
+
+  backend:
+    build: ./backend
+    container_name: pomodoro_backend
+    environment:
+      DATABASE_URL: postgresql://pomodoro_user:pomodoro_pass@postgres:5432/pomodoro_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - pomodoro_network
+
+  frontend:
+    build: ./frontend
+    container_name: pomodoro_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - pomodoro_network
+
+volumes:
+  postgres_data:
+
+networks:
+  pomodoro_network:
+    driver: bridge
