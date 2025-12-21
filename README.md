@@ -417,11 +417,6 @@ Verifique:
 
 ---
 
-## 👥 Autor
-
-Alice - Estudante de Mestrado em Ciência da Computação
-
----
 
 ## 📄 Licença
 
